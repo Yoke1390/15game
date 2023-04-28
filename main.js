@@ -1,16 +1,29 @@
 const $table = document.getElementById("nine_keys");
 const $numbers = document.getElementById("numberList");
+const $winModal = document.getElementById('win-modal');
+const $winModalContent = document.getElementById('win-modal-content');
 window.addEventListener("resize", resizeTable);
 
+class GameState {
+    constructor() {
+        this.numbersRemain = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        this.disabled_keys = new Set();
+        this.gameNumbers = {
+            "player": new Set(),
+            "enemy": new Set(),
+        }
+    }
+}
+state = new GameState();
+
 let numbersRemain = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-let disabled_keys = new Set();
+let disabledKeys = new Set();
 
 const gameNumbers = {
     "player": new Set(),
     "enemy": new Set(),
 }
 
-// 敵とプレイヤーで色を変える
 const textStyle = {
     "player": "chat-bubble--right",
     "enemy": "chat-bubble--left"
@@ -22,17 +35,28 @@ function getRandomValueFromSet(set) {
     return values[Math.floor(Math.random() * values.length)];
 }
 
+// 3つの数字の和を計算する関数
+function getSumOfTriplets(set) {
+    const array = Array.from(set);
+    const result = [];
+    if (array.length < 3) {
+        return result;
+    }
+    for (let i = 0; i < array.length; i++) {
+        for (let j = i + 1; j < array.length; j++) {
+            for (let k = j + 1; k < array.length; k++) {
+                result.push([array[i], array[j], array[k]].reduce((a, b) => a + b, 0));
+            }
+        }
+    }
+    return result;
+}
+
 function makeMessage(number, side) {
-    const row = document.createElement("div");
-    row.classList.add("row", "no-gutters");
-    const col = document.createElement("div");
-    col.classList.add("col-3", "offset-md-9");
-    row.appendChild(col);
     const message = document.createElement("div");
     message.classList.add("chat-bubble", textStyle[side]);
     message.appendChild(document.createTextNode(number));
-    col.appendChild(message);
-    return row;
+    return message;
 }
 
 function add_number(number, side) {
@@ -41,24 +65,61 @@ function add_number(number, side) {
     $numbers.appendChild(div);
 
     // 数字を追加
-    gameNumbers[side].add(number);
+    state.gameNumbers[side].add(number);
 
     // 押されたキーを無効化
     const $key = document.getElementById("key_" + number);
     $key.classList.add("disabled");
-    disabled_keys.add(number);
-    numbersRemain.delete(number);
+    state.disabled_keys.add(number);
+    state.numbersRemain.delete(number);
+
+    // 最後までスクロール
+    $numbers.scrollTo(0, $numbers.scrollHeight);
 }
 
+// 勝敗の判定
+function judge() {
+    if (state.gameNumbers["player"].size >= 3 || state.gameNumbers["enemy"].size >= 3) {
+        const playerSum = getSumOfTriplets(state.gameNumbers["player"]);
+        const enemySum = getSumOfTriplets(state.gameNumbers["enemy"]);
+        if (playerSum.includes(15)) {
+            $winModalContent.innerHTML = "<h2>Player Win!!</h2>";
+            $winModal.classList.add('active');
+            return "player";
+        }
+        else if (enemySum.includes(15)) {
+            $winModalContent.innerHTML = "<h2>Enemy Win!!</h2>";
+            $winModal.classList.add('active');
+            return "enemy";
+        }
+        else if (state.disabled_keys.size === 9) {
+            $winModalContent.innerHTML = "<h2>Draw!!</h2>";
+            $winModal.classList.add('active');
+            return "draw";
+        }
+        else {
+            return "unknown";
+        }
+    } else {
+        return "unknown";
+    }
+}
+
+// クリックイベント
 function handleClick() {
+    // ボタンの数字を取得
     const cellNumber = parseInt(this.id.split("_")[1]); // key_1 -> 1のように数字のみを取り出す
-    if (disabled_keys.has(cellNumber)) {
+    // すでに押されている場合は何もしない
+    if (state.disabled_keys.has(cellNumber)) {
         return;
     } else {
         console.log("Clicked cell: " + cellNumber);
         add_number(cellNumber, "player");
-        if (numbersRemain.size > 0) {
-            add_number(getRandomValueFromSet(numbersRemain), "enemy");
+        const result = judge();
+        console.log(result);
+
+        if (state.numbersRemain.size > 0) {
+            add_number(getRandomValueFromSet(state.numbersRemain), "enemy");
         }
     }
 }
