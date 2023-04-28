@@ -1,0 +1,132 @@
+body {
+  background-color: #eee;
+}
+
+td {
+  text-align: center;
+}
+
+#nine_keys {
+  background-color: #fff;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+}
+
+#numberList {
+  margin-top: 50px;
+  height: calc(100vh - 350px);
+  overflow-y: scroll;
+}
+
+.disabled {
+  background-color: #777;
+  border: 1px solid black;
+  font-family: Arial;
+  font-size: 50px;
+  height: 100px;
+}
+
+.header {
+  background-color: #cfc;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 50px;
+  text-align: center;
+  line-height: 50px;
+  font-size: 20px;
+  font-family: Arial;
+}
+
+.key {
+  border: 1px solid black;
+  font-family: Arial;
+  font-size: 50px;
+  height: 100px;
+}
+
+.chat-bubble {
+  padding: 10px 14px;
+  background: #ddd;
+  margin: 10px 30px;
+  border-radius: 9px;
+  position: relative;
+  width: 80px;
+}
+.chat-bubble:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border: 20px solid transparent;
+  border-bottom: 0;
+  margin-top: -10px;
+}
+.chat-bubble--left {
+  animation: fadeInEnemy 0.75s ease-in;
+  margin-left: 20px;
+}
+.chat-bubble--left:after {
+  left: 0;
+  border-right-color: #ddd;
+  border-left: 0;
+  margin-left: -20px;
+}
+.chat-bubble--right {
+  margin-left: calc(100vw - 40px - 80px);
+  background: #ddf;
+  animation: fadeInPlayer 0.3s ease-in;
+}
+.chat-bubble--right:after {
+  right: 0;
+  border-left-color: #ddf;
+  border-right: 0;
+  margin-right: -20px;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+  display: none;
+}
+.modal.active {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal .modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+@keyframes fadeInPlayer {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fadeInEnemy {
+  0% {
+    opacity: 0;
+  }
+  60% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}/*# sourceMappingURL=style.css.map */
