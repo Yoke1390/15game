@@ -1,0 +1,25 @@
+.my_item {
+    background-color: #ddf;
+}
+
+.enemy_item {
+    background-color: #dfd;
+}
+
+.key {
+    border: 1px solid black;
+    font-family: Arial;
+    font-size: 50px;
+    height: 100px;
+}
+
+td {
+    text-align: center;
+}
+
+#nine_keys {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+}
